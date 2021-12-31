@@ -12,7 +12,7 @@
 	"map": [ "share:rw" ],
 
 	"options": {
-		"serial_mode": "serial",
+		"serial_mode": "socket",
 		"serial": {
 			"port":  "/dev/ttyUSB0",
 			"baudrate": 9600,
@@ -21,7 +21,7 @@
 			"stopbits": 1
 		},
 		"socket": {
-			"address": "192.168.1.1",
+			"address": "192.168.21.103",
 			"port": 8899
 		},
 		"log": {

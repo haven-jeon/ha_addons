@@ -103,12 +103,17 @@ RS485_DEVICE = {
 
     # 환기장치 (전열교환기)
     "fan": {
-        "query":    { "header": 0xC24E, "length":  6, },
-        "state":    { "header": 0xB04E, "length":  6, "parse": {("power", 4, "fan_toggle"), ("preset", 2, "fan_speed")} },
+        "query":    { "header": 0xF732, "length":  6, "id": 2,  },
+        "state":    { "header": 0xF732, "length":  11, "parse": {("power", 6, "fan_toggle"), ("preset", 7, "fan_speed"), ("mode", 8, "fan_mode")} }, # 0x01 일반, 0x02 취침, 0x03 전열, 0x04 자동, 0x05 절약
         "last":     { },
 
-        "power":    { "header": 0xC24F, "length":  6, "pos": 2, },
+        "power":    { "header": 0xF732, "length":  6, "pos": 2, },
         "preset":   { "header": 0xC24F, "length":  6, "pos": 2, },
+    },
+
+    "sysclien": {
+        "query":    { "header": 0xF761, "length":  7, "id": 2, },
+        "state":    { "header": 0xF761, "length":  6, "parse": {("power", 4, "fan_toggle"), ("preset", 2, "fan_speed")} }
     },
 
     # 각방 난방 제어
@@ -662,7 +667,7 @@ def mqtt_debug(topics, payload):
         if (command == "send"):
             # parity는 여기서 재생성
             packet = bytearray.fromhex(payload)
-            packet[-1] = serial_generate_checksum(packet)
+            packet = packet[:-1] + serial_generate_checksum(packet)
             packet = bytes(packet)
 
             logger.info("prepare packet:  {}".format(packet.hex()))
@@ -703,7 +708,7 @@ def mqtt_device(topics, payload):
     if "id" in cmd: packet[cmd["id"]] = int(idn)
 
     # parity 생성 후 queue 에 넣어둠
-    packet[-1] = serial_generate_checksum(packet)
+    packet = packet[:-1] + serial_generate_checksum(packet)
     packet = bytes(packet)
 
     serial_queue[packet] = time.time()
@@ -884,7 +889,9 @@ def virtual_query(header_0, header_1):
             if resp[2] == 0xFF:
                 ba = bytearray(resp)
                 ba[2] = conn.recv(1)[0]
-                ba[3] = serial_generate_checksum(ba)
+                x, a = serial_generate_checksum(ba)
+                ba[3] = x
+                ba[4] = a
                 resp = bytes(ba)
 
             conn.send(resp)
@@ -927,11 +934,16 @@ def serial_verify_checksum(packet):
 def serial_generate_checksum(packet):
     # 마지막 제외하고 모든 byte를 XOR
     checksum = 0
-    for b in packet[:-1]:
+    add_checksum = 0
+    for b in packet:
         checksum ^= b
+        add_checksum += b
+    add_checksum += checksum
+    return [checksum, add_checksum % 256]
+
 
     # parity의 최상위 bit는 항상 0
-    if checksum >= 0x80: checksum -= 0x80
+    #if checksum >= 0x80: checksum -= 0x80
 
     return checksum
 

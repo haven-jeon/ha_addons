@@ -1,0 +1,18 @@
+{
+	"serial_mode": "socket",
+	"serial": {
+		"port": "/dev/ttyUSB0",
+		"baudrate": 9600,
+		"bytesize": 8,
+		"parity": "N",
+		"stopbits": 1
+	},
+	"socket": {
+		"address": "192.168.21.103",
+		"port": 8899
+	},
+	"log": {
+		"to_file": true,
+		"filename": "./log/wallpad_dump.log"
+	}
+}

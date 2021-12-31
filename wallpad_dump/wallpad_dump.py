@@ -3,6 +3,7 @@
 import socket
 import serial
 import json
+import re
 
 import sys
 import logging
@@ -190,8 +191,11 @@ def dump_loop():
 #               elif b == 0xFF: logs.append(   "{:02X}".format(b))
 #               elif b == 0xB0: logs.append( ": {:02X}".format(b))
 #               else:           logs.append(",  {:02X}".format(b))
-                logs.append(" {:02X}".format(b))
-            logger.info("".join(logs))
+                data = " {:02X}".format(b)
+                logs.append(data)
+            one_line = "".join(logs)
+            if 'F7 32 01 41' in one_line: 
+                logger.info(one_line)
         sleep(0.01)
 
     logger.info("".join(logs))
