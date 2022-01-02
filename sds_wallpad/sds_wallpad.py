@@ -15,152 +15,152 @@ import re
 ####################
 VIRTUAL_DEVICE = {
     # 현관스위치: 엘리베이터 호출, 가스밸브 잠금 지원
-    "entrance": {
-        "header0": 0xAD,
-        "resp_size": 4,
-        "default": {
-            "init":  { "header1": 0x5A, "resp": 0xB05A006A, }, # 처음 전기가 들어왔거나 한동안 응답을 안했을 때, 이것부터 해야 함
-            "query": { "header1": 0x41, "resp": 0xB0560066, }, # 여기에 0xB0410071로 응답하면 gas valve 상태는 전달받지 않음
-            "gas":   { "header1": 0x56, "resp": 0xB0410071, }, # 0xAD41에 항상 0xB041로 응답하면 이게 실행될 일은 없음
-            "light": { "header1": 0x52, "resp": 0xB0520163, },
+    #"entrance": {
+    #    "header0": 0xAD,
+    #    "resp_size": 4,
+    #    "default": {
+    #        "init":  { "header1": 0x5A, "resp": 0xB05A006A, }, # 처음 전기가 들어왔거나 한동안 응답을 안했을 때, 이것부터 해야 함
+    #        "query": { "header1": 0x41, "resp": 0xB0560066, }, # 여기에 0xB0410071로 응답하면 gas valve 상태는 전달받지 않음
+    #        "gas":   { "header1": 0x56, "resp": 0xB0410071, }, # 0xAD41에 항상 0xB041로 응답하면 이게 실행될 일은 없음
+    #        "light": { "header1": 0x52, "resp": 0xB0520163, },
 
             # 성공 시 ack들, 무시해도 상관 없지만...
-            "gasa":  { "header1": 0x55, "resp": 0xB0410071, },
-            "eva":   { "header1": 0x2F, "resp": 0xB0410071, },
-        },
+    #        "gasa":  { "header1": 0x55, "resp": 0xB0410071, },
+    #        "eva":   { "header1": 0x2F, "resp": 0xB0410071, },
+    #    },
 
         # 0xAD41에 다르게 응답하는 방법들, 이 경우 월패드가 다시 ack를 보내준다
-        "trigger": {
-            "gas":   { "ack": 0x55, "ON": 0xB0550164, "next": None, },
-            "ev":    { "ack": 0x2F, "ON": 0xB02F011E, "next": None, },
-        },
-    },
+    #    "trigger": {
+    #        "gas":   { "ack": 0x55, "ON": 0xB0550164, "next": None, },
+    #        "ev":    { "ack": 0x2F, "ON": 0xB02F011E, "next": None, },
+    #    },
+    #},
 
     # 신형 현관스위치
-    "entrance2": {
-        "header0": 0xCC,
-        "resp_size": 5,
-        "default": {
-            "init":  { "header1": 0x5A, "resp": 0xB05A01006B, }, # 처음 전기가 들어왔거나 한동안 응답을 안했을 때, 이것부터 해야 함
-            "query": { "header1": 0x41, "resp": 0xB041010070, }, # keepalive
-            "date":  { "header1": 0x01, "resp": 0xB001010030, }, # 스위치로 현재 날짜, 시각 전달
-            "broad": { "header1": 0x0B, "resp": 0xB00B01003A, }, # 다른 기기 상태 전달받음
-            "ukn12": { "header1": 0x12, "resp": 0xB041010070, }, # 엘리베이터 호출 결과?
-            "ukn09": { "header1": 0x09, "resp": 0xB009010038, },
-            "ukn07": { "header1": 0x07, "resp": 0xB007010137, },
-            "ukn02": { "header1": 0x02, "resp": 0xB041010070, },
+    #"entrance2": {
+    #    "header0": 0xCC,
+    #    "resp_size": 5,
+    #    "default": {
+    #        "init":  { "header1": 0x5A, "resp": 0xB05A01006B, }, # 처음 전기가 들어왔거나 한동안 응답을 안했을 때, 이것부터 해야 함
+    #        "query": { "header1": 0x41, "resp": 0xB041010070, }, # keepalive
+    #        "date":  { "header1": 0x01, "resp": 0xB001010030, }, # 스위치로 현재 날짜, 시각 전달
+    #        "broad": { "header1": 0x0B, "resp": 0xB00B01003A, }, # 다른 기기 상태 전달받음
+    #        "ukn12": { "header1": 0x12, "resp": 0xB041010070, }, # 엘리베이터 호출 결과?
+    #        "ukn09": { "header1": 0x09, "resp": 0xB009010038, },
+    #        "ukn07": { "header1": 0x07, "resp": 0xB007010137, },
+    #        "ukn02": { "header1": 0x02, "resp": 0xB041010070, },
 
             # 성공 시 ack들, 무시해도 상관 없...으려나?
-            "eva":   { "header1": 0x10, "resp": 0xB041010070, },
-        },
+    #        "eva":   { "header1": 0x10, "resp": 0xB041010070, },
+    #    },
 
         # 0xCC41에 다르게 응답하는 방법들, 이 경우 월패드가 다시 ack를 보내준다
-        "trigger": {
-            "ev":    { "ack": 0x10, "ON": 0xB010010120, "next": None, },
-        },
-    },
+    #    "trigger": {
+    #        "ev":    { "ack": 0x10, "ON": 0xB010010120, "next": None, },
+    #    },
+    #},
 
     # 인터폰: 공동현관 문열림 기능 지원
-    "intercom": {
-        "header0": 0xA4,
-        "resp_size": 4,
-        "default": {
-            "init":    { "header1": 0x5A, "resp": 0xB05A006A, }, # 처음 전기가 들어왔거나 한동안 응답을 안했을 때, 이것부터 해야 함
-            "query":   { "header1": 0x41, "resp": 0xB0410071, }, # 평상시
-            "block":   { "header1": 0x42, "resp": 0xB0410071, }, # 다른 인터폰이 통화중이라던지 해서 조작 거부중인 상태
-            "public":  { "header1": 0x32, "resp": 0xB0320002, }, # 공동현관 초인종 눌림
-            "private": { "header1": 0x31, "resp": 0xB0310001, }, # 현관 초인종 눌림
-            "opena":   { "header1": 0x36, "resp": 0xB0420072, }, # 통화 시작 요청 성공, 통화중이라고 ack 보내기
-            "vopena":  { "header1": 0x38, "resp": 0xB0420072, }, # 영상통화 시작 요청 성공, 통화중이라고 ack 보내기
-            "vconna":  { "header1": 0x35, "resp": 0xB0350005, }, # 영상 전송 시작됨
-            "open2a":  { "header1": 0x3B, "resp": 0xB0420072, }, # 문열림 요청 성공, 통화중이라고 ack 보내기
-            "end":     { "header1": 0x3E, "resp": 0xB03EFFFF, }, # 상황 종료, Byte[2] 가 반드시 일치해야 함
-        },
+    #"intercom": {
+    #    "header0": 0xA4,
+    #    "resp_size": 4,
+    #    "default": {
+    #        "init":    { "header1": 0x5A, "resp": 0xB05A006A, }, # 처음 전기가 들어왔거나 한동안 응답을 안했을 때, 이것부터 해야 함
+    #        "query":   { "header1": 0x41, "resp": 0xB0410071, }, # 평상시
+    #        "block":   { "header1": 0x42, "resp": 0xB0410071, }, # 다른 인터폰이 통화중이라던지 해서 조작 거부중인 상태
+    #        "public":  { "header1": 0x32, "resp": 0xB0320002, }, # 공동현관 초인종 눌림
+    #        "private": { "header1": 0x31, "resp": 0xB0310001, }, # 현관 초인종 눌림
+    #        "opena":   { "header1": 0x36, "resp": 0xB0420072, }, # 통화 시작 요청 성공, 통화중이라고 ack 보내기
+    #        "vopena":  { "header1": 0x38, "resp": 0xB0420072, }, # 영상통화 시작 요청 성공, 통화중이라고 ack 보내기
+    #        "vconna":  { "header1": 0x35, "resp": 0xB0350005, }, # 영상 전송 시작됨
+    #        "open2a":  { "header1": 0x3B, "resp": 0xB0420072, }, # 문열림 요청 성공, 통화중이라고 ack 보내기
+    #        "end":     { "header1": 0x3E, "resp": 0xB03EFFFF, }, # 상황 종료, Byte[2] 가 반드시 일치해야 함
+    #    },
 
-        "trigger": {
-            "public":  { "ack": 0x36, "ON": 0xB0360204, "next": ("public2", "ON"), }, # 통화 시작
-            "public2": { "ack": 0x3B, "ON": 0xB03B010A, "next": ("end", "ON"), }, # 문열림
-            "priv_a":  { "ack": 0x36, "ON": 0xB0360107, "next": ("privat2", "ON"), }, # 현관 통화 시작 (초인종 울렸을 때)
-            "priv_b":  { "ack": 0x35, "ON": 0xB0380008, "next": ("privat2", "ON"), }, # 현관 통화 시작 (평상시)
-            "private": { "ack": 0x35, "ON": 0xB0380008, "next": ("privat2", "ON"), }, # 현관 통화 시작 (평상시)
-            "privat2": { "ack": 0x3B, "ON": 0xB03B000B, "next": ("end", "ON"), }, # 현관 문열림
-            "end":     { "ack": 0x3E, "ON": 0xB0420072, "next": None, }, # 문열림 후, 통화 종료 알려줄때까지 통화상태로 유지
-        },
-    },
+    #    "trigger": {
+    #        "public":  { "ack": 0x36, "ON": 0xB0360204, "next": ("public2", "ON"), }, # 통화 시작
+    #        "public2": { "ack": 0x3B, "ON": 0xB03B010A, "next": ("end", "ON"), }, # 문열림
+    #        "priv_a":  { "ack": 0x36, "ON": 0xB0360107, "next": ("privat2", "ON"), }, # 현관 통화 시작 (초인종 울렸을 때)
+    #        "priv_b":  { "ack": 0x35, "ON": 0xB0380008, "next": ("privat2", "ON"), }, # 현관 통화 시작 (평상시)
+    #        "private": { "ack": 0x35, "ON": 0xB0380008, "next": ("privat2", "ON"), }, # 현관 통화 시작 (평상시)
+    #        "privat2": { "ack": 0x3B, "ON": 0xB03B000B, "next": ("end", "ON"), }, # 현관 문열림
+    #        "end":     { "ack": 0x3E, "ON": 0xB0420072, "next": None, }, # 문열림 후, 통화 종료 알려줄때까지 통화상태로 유지
+    #    },
+    #},
 }
 
 ####################
 # 기존 월패드 애드온의 역할하는 부분
 RS485_DEVICE = {
     # 전등 스위치
-    "light": {
-        "query":    { "header": 0xAC79, "length":  5, "id": 2, },
-        "state":    { "header": 0xB079, "length":  5, "id": 2, "parse": {("power", 3, "bitmap")} },
-        "last":     { },
+    #"light": {
+    #    "query":    { "header": 0xAC79, "length":  5, "id": 2, },
+    #    "state":    { "header": 0xB079, "length":  5, "id": 2, "parse": {("power", 3, "bitmap")} },
+    #    "last":     { },
 
-        "power":    { "header": 0xAC7A, "length":  5, "id": 2, "pos": 3, },
-    },
+    #    "power":    { "header": 0xAC7A, "length":  5, "id": 2, "pos": 3, },
+    #},
 
     # 환기장치 (전열교환기)
     "fan": {
-        "query":    { "header": 0xF732, "length":  6, "id": 2,  },
-        "state":    { "header": 0xF732, "length":  11, "parse": {("power", 6, "fan_toggle"), ("preset", 7, "fan_speed"), ("mode", 8, "fan_mode")} }, # 0x01 일반, 0x02 취침, 0x03 전열, 0x04 자동, 0x05 절약
+        "query":    { "header": 0xF73201, "length":  5, "h_len": 3},
+        "state":    { "header": 0xF7320181, "length":  11, "h_len": 4, "parse": {("power", 6, "fan_toggle"), ("preset", 7, "fan_speed"), ("mode", 8, "fan_mode")} }, # 0x01 일반, 0x02 취침, 0x03 전열, 0x04 자동, 0x05 절약
         "last":     { },
 
-        "power":    { "header": 0xF732, "length":  6, "pos": 2, },
-        "preset":   { "header": 0xC24F, "length":  6, "pos": 2, },
+        "power":    { "header": 0xF7320141, "length":  6, "pos": 5, "h_len": 4},
+        "preset":   { "header": 0xF7320142, "length":  6, "pos": 5, "h_len": 4},
     },
 
-    "sysclien": {
-        "query":    { "header": 0xF761, "length":  7, "id": 2, },
-        "state":    { "header": 0xF761, "length":  6, "parse": {("power", 4, "fan_toggle"), ("preset", 2, "fan_speed")} }
-    },
+    #"sysclien": {
+    #    "query":    { "header": 0xF761, "length":  7, "id": 2, },
+    #    "state":    { "header": 0xF761, "length":  6, "parse": {("power", 4, "fan_toggle"), ("preset", 2, "fan_speed")} }
+    #},
 
     # 각방 난방 제어
-    "thermostat": {
-        "query":    { "header": 0xAE7C, "length":  8, "id": 2, },
-        "state":    { "header": 0xB07C, "length":  8, "id": 2, "parse": {("power", 3, "heat_toggle"), ("target", 4, "value"), ("current", 5, "value")} },
-        "last":     { },
+    #"thermostat": {
+    #    "query":    { "header": 0xAE7C, "length":  8, "id": 2, },
+    #    "state":    { "header": 0xB07C, "length":  8, "id": 2, "parse": {("power", 3, "heat_toggle"), ("target", 4, "value"), ("current", 5, "value")} },
+    #    "last":     { },
 
-        "power":    { "header": 0xAE7D, "length":  8, "id": 2, "pos": 3, },
-        "target":   { "header": 0xAE7F, "length":  8, "id": 2, "pos": 3, },
-    },
+    #    "power":    { "header": 0xAE7D, "length":  8, "id": 2, "pos": 3, },
+    #    "target":   { "header": 0xAE7F, "length":  8, "id": 2, "pos": 3, },
+    #},
 
     # 대기전력차단 스위치 (전력사용량 확인)
-    "plug": {
-        "query":    { "header": 0xC64A, "length": 10, "id": 2, },
-        "state":    { "header": 0xB04A, "length": 10, "id": 2, "parse": {("power", 3, "toggle"), ("idlecut", 3, "toggle2"), ("current", 5, "2Byte")} },
-        "last":     { },
+    #"plug": {
+    #    "query":    { "header": 0xC64A, "length": 10, "id": 2, },
+    #    "state":    { "header": 0xB04A, "length": 10, "id": 2, "parse": {("power", 3, "toggle"), ("idlecut", 3, "toggle2"), ("current", 5, "2Byte")} },
+    #    "last":     { },
 
-        "power":    { "header": 0xC66E, "length": 10, "id": 2, "pos": 3, },
-        "idlecut":  { "header": 0xC64B, "length": 10, "id": 2, "pos": 3, },
-    },
+    #    "power":    { "header": 0xC66E, "length": 10, "id": 2, "pos": 3, },
+    #    "idlecut":  { "header": 0xC64B, "length": 10, "id": 2, "pos": 3, },
+    #},
 
     # 일괄조명: 현관 스위치 살아있으면...
-    "cutoff": {
-        "query":    { "header": 0xAD52, "length":  4, },
-        "state":    { "header": 0xB052, "length":  4, "parse": {("power", 2, "toggle")} }, # 1: 정상, 0: 일괄소등
-        "last":     { },
+    #"cutoff": {
+    #    "query":    { "header": 0xAD52, "length":  4, },
+    #    "state":    { "header": 0xB052, "length":  4, "parse": {("power", 2, "toggle")} }, # 1: 정상, 0: 일괄소등
+    #    "last":     { },
 
-        "power":    { "header": 0xAD53, "length":  4, "pos": 2, },
-    },
+    #    "power":    { "header": 0xAD53, "length":  4, "pos": 2, },
+    #},
 
     # 부엌 가스 밸브
-    "gas_valve": {
-        "query":    { "header": 0xAB41, "length":  4, },
+    #"gas_valve": {
+    #    "query":    { "header": 0xAB41, "length":  4, },
         #"state":    { "header": 0xB041, "length":  4, "parse": {("power", 2, "toggle")} }, # 0: 정상, 1: 차단; 0xB041은 공용 ack이므로 처리하기 복잡함
-        "state":    { "header": 0xAD56, "length":  4, "parse": {("power", 2, "gas_toggle")} }, # 0: 정상, 1: 차단; 월패드가 현관 스위치에 보내주는 정보로 확인 가능
-        "last":     { },
+    #    "state":    { "header": 0xAD56, "length":  4, "parse": {("power", 2, "gas_toggle")} }, # 0: 정상, 1: 차단; 월패드가 현관 스위치에 보내주는 정보로 확인 가능
+    #    "last":     { },
 
-        "power":    { "header": 0xAB78, "length":  4, }, # 0 으로 잠그기만 가능
-    },
+    #    "power":    { "header": 0xAB78, "length":  4, }, # 0 으로 잠그기만 가능
+    #},
 
     # 실시간에너지 0:전기, 1:가스, 2:수도
-    "energy": {
-        "query":    { "header": 0xAA6F, "length":  4, "id": 2, },
-        "state":    { "header": 0xB06F, "length":  7, "id": 2, "parse": {("current", 3, "6decimal")} },
-        "last":     { },
-    },
+    #"energy": {
+    #    "query":    { "header": 0xAA6F, "length":  4, "id": 2, },
+    #    "state":    { "header": 0xB06F, "length":  7, "id": 2, "parse": {("current", 3, "6decimal")} },
+    #    "last":     { },
+    #},
 }
 
 DISCOVERY_DEVICE = {
@@ -324,21 +324,21 @@ DISCOVERY_PAYLOAD = {
 }
 
 STATE_HEADER = {
-    prop["state"]["header"]: (device, prop["state"]["length"] - 2)
+    prop["state"]["header"]: (device, prop["state"]["length"] - prop["state"]["h_len"])
     for device, prop in RS485_DEVICE.items()
     if "state" in prop
 }
 QUERY_HEADER = {
-    prop["query"]["header"]: (device, prop["query"]["length"] - 2)
+    prop["query"]["header"]: (device, prop["query"]["length"] - prop["state"]["h_len"])
     for device, prop in RS485_DEVICE.items()
     if "query" in prop
 }
 
 HEADER_0_STATE = 0xB0
-HEADER_0_FIRST = 0xA1
+HEADER_0_FIRST = 0xF7
 header_0_virtual = {}
 HEADER_1_SCAN = 0x5A
-header_0_first_candidate = [ 0xAB, 0xAC, 0xAD, 0xAE, 0xC2, 0xA5 ]
+header_0_first_candidate = []
 
 
 # human error를 로그로 찍기 위해서 그냥 전부 구독하자
@@ -667,7 +667,7 @@ def mqtt_debug(topics, payload):
         if (command == "send"):
             # parity는 여기서 재생성
             packet = bytearray.fromhex(payload)
-            packet = packet[:-1] + serial_generate_checksum(packet)
+            packet = packet[:-1] + serial_generate_checksum(packet[:-1])
             packet = bytes(packet)
 
             logger.info("prepare packet:  {}".format(packet.hex()))
@@ -708,7 +708,7 @@ def mqtt_device(topics, payload):
     if "id" in cmd: packet[cmd["id"]] = int(idn)
 
     # parity 생성 후 queue 에 넣어둠
-    packet = packet[:-1] + serial_generate_checksum(packet)
+    packet = packet[:-1] + serial_generate_checksum(packet[:-1])
     packet = bytes(packet)
 
     serial_queue[packet] = time.time()
@@ -889,7 +889,7 @@ def virtual_query(header_0, header_1):
             if resp[2] == 0xFF:
                 ba = bytearray(resp)
                 ba[2] = conn.recv(1)[0]
-                x, a = serial_generate_checksum(ba)
+                x, a = serial_generate_checksum(ba[:-1])
                 ba[3] = x
                 ba[4] = a
                 resp = bytes(ba)
@@ -1064,23 +1064,16 @@ def serial_receive_state(device, packet):
 
 def serial_get_header():
     try:
-        # 0x80보다 큰 byte가 나올 때까지 대기
+        # 0xF7보다 큰 byte가 나올 때까지 대기
         while 1:
             header_0 = conn.recv(1)[0]
-            if header_0 >= 0x80: break
-
-        # 중간에 corrupt되는 data가 있으므로 연속으로 0x80보다 큰 byte가 나오면 먼젓번은 무시한다
-        while 1:
-            header_1 = conn.recv(1)[0]
-            if header_1 < 0x80: break
-            header_0 = header_1
-
+            if header_0 >= 0xF7: break
     except (OSError, serial.SerialException):
         logger.error("ignore exception!")
-        header_0 = header_1 = 0
+        header_0 =  0
 
     # 헤더 반환
-    return header_0, header_1
+    return header_0
 
 
 def serial_ack_command(packet):
@@ -1125,24 +1118,29 @@ def serial_loop():
         # 로그 출력
         sys.stdout.flush()
 
-        # 첫 Byte만 0x80보다 큰 두 Byte를 찾음
-        header_0, header_1 = serial_get_header()
-        header = (header_0 << 8) | header_1
-
+        # 첫 Byte만 0xF7보다 큰 Byte를 찾음
+        header_0 = serial_get_header()
+        device_id = conn.recv(1)[0]
+        device_sub_id = conn.recv(1)[0]
+        command_type = conn.recv(1)[0]
+        header = (header_0 << 8 * 3) | (device_id << 8 * 2) | (device_sub_id << 8) | command_type  
+        
+        logger.info("{:02X}".format(header))
         # 요청했던 동작의 ack 왔는지 확인
-        if header in virtual_ack:
-            virtual_clear(header)
+        #if header in virtual_ack:
+        #    virtual_clear(header)
 
         # 인터폰 availability 관련 헤더인지 확인
-        if header in virtual_avail:
-            virtual_enable(header_0, header_1)
+        #if header in virtual_avail:
+        #    virtual_enable(header_0, header_1)
 
         # 가상 장치로써 응답해야 할 header인지 확인
-        if header_0 in header_0_virtual:
-            virtual_query(header_0, header_1)
+        #if header_0 in header_0_virtual:
+        #    virtual_query(header_0, header_1)
 
         # device로부터의 state 응답이면 확인해서 필요시 HA로 전송해야 함
         if header in STATE_HEADER:
+            logger.info("{:02X}".format(header))
             packet = bytes([header_0, header_1])
 
             # 몇 Byte짜리 패킷인지 확인
